@@ -1,0 +1,76 @@
+{% load static %}<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Crypto Signal Bot</title>
+    <link rel="stylesheet" href="{% static 'app.css' %}" />
+  </head>
+  <body>
+    <header>
+      <div>
+        <small>PRIVATE ANALYSIS SYSTEM</small>
+        <h1>Crypto Signal Bot</h1>
+      </div>
+      <nav><a href="/api/docs/">API</a><a href="/admin/">Admin</a></nav>
+    </header>
+    <main>
+      <section class="hero">
+        <div>
+          <span class="live">SYSTEM ONLINE</span>
+          <h2>Signals, not automatic trades.</h2>
+          <p>
+            Every setup is generated from completed candles, stored with its
+            evidence, and tracked to an outcome.
+          </p>
+        </div>
+        <div class="metric">
+          <strong>{{ signals|length }}</strong><span>recent signals</span>
+        </div>
+      </section>
+      <h3>Latest Signals</h3>
+      <div class="grid">
+        {% for s in signals %}
+        <article>
+          <div class="row">
+            <strong>{{ s.analysis.symbol }}</strong
+            ><span class="pill {{ s.state }}">{{ s.state }}</span>
+          </div>
+          <p>{{ s.analysis.interval }} · Score {{ s.confidence }}/100</p>
+          <dl>
+            <dt>Entry</dt>
+            <dd>{{ s.entry_low }} - {{ s.entry_high }}</dd>
+            <dt>Stop</dt>
+            <dd>{{ s.stop_loss }}</dd>
+            <dt>Targets</dt>
+            <dd>{{ s.target_1 }} / {{ s.target_2 }}</dd>
+          </dl>
+        </article>
+        {% empty %}
+        <article>
+          <strong>No signals yet</strong>
+          <p>
+            Ingest at least 210 closed candles and run the analysis command.
+          </p>
+        </article>
+        {% endfor %}
+      </div>
+      <h3>Recent Analysis</h3>
+      <div class="table">
+        <div class="tr head">
+          <span>Market</span><span>Status</span><span>Score</span
+          ><span>Candle</span>
+        </div>
+        {% for a in analyses %}
+        <div class="tr">
+          <span>{{ a.symbol }} · {{ a.interval }}</span
+          ><span>{{ a.status }}</span><span>{{ a.score }}</span
+          ><span>{{ a.candle_close_time }}</span>
+        </div>
+        {% empty %}
+        <p>No analysis runs.</p>
+        {% endfor %}
+      </div>
+    </main>
+  </body>
+</html>
